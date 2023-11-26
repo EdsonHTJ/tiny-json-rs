@@ -3,7 +3,7 @@
 extern crate alloc;
 
 mod lexer;
-mod mapper;
+mod     mapper;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
