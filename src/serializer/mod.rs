@@ -123,7 +123,7 @@ where
 pub mod test {
     use alloc::string::{String, ToString};
     use alloc::vec::Vec;
-    use macros::{Deserialize, Serialize};
+    use tiny_json_derive::{Deserialize, Serialize};
 
     use crate::alloc::borrow::ToOwned;
     use crate::mapper;
