@@ -2,21 +2,22 @@
 #![no_std]
 extern crate alloc;
 
-mod lexer;
-mod     mapper;
-mod serializer;
+use alloc::string::String;
 
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+pub mod lexer;
+pub mod     mapper;
+pub mod serializer;
+
+pub fn encode<T>(value: T) -> String
+where
+    T: serializer::Serialize,
+{
+    serializer::encode(value)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub fn decode<T>(input_str: String) -> Result<T, serializer::DecodeError>
+where
+    T: serializer::Deserialize,
+{
+    serializer::decode(input_str)
 }

@@ -1,5 +1,7 @@
-mod desserializers;
+mod deserializers;
+mod serializers;
 
+use alloc::format;
 use alloc::string::String;
 use core::str::FromStr;
 use crate::lexer::{Lexer, LexerError, Token};
@@ -7,6 +9,10 @@ use crate::mapper::{Mapper, MapperError, Value};
 
 pub trait Deserialize: Sized {
     fn deserialize(value: Option<&Value>) -> Result<Self, DecodeError>;
+}
+
+pub trait Serialize: Sized {
+    fn serialize(&self) -> Value;
 }
 
 #[derive(Debug)]
@@ -52,6 +58,48 @@ impl Value {
 
         Ok(res)
     }
+
+    pub fn encode_json(&self) -> String {
+        let mut output = String::new();
+        match self {
+            Value::Object(object) => {
+                output += "{";
+                let mut first = true;
+                for (key, value) in object {
+                    if !first {
+                        output += ",";
+                    }
+                    first = false;
+                    output += &format!("\"{}\":{}", key, value.encode_json());
+                }
+                output += "}";
+            }
+            Value::Token(t) => {
+                match t.token_type {
+                    crate::lexer::TokenType::String(_) => {
+                        output += &format!("\"{}\"", t.literal);
+                    }
+                    _ => {
+                        output += &format!("{}", t.literal);
+                    }
+                }
+            }
+            Value::Array(a) => {
+                output += "[";
+                let mut first = true;
+                for value in a {
+                    if !first {
+                        output += ",";
+                    }
+                    first = false;
+                    output += &format!("{}", value.encode_json());
+                }
+                output += "]";
+            }
+        }
+
+        output
+    }
 }
 
 pub fn decode<T>(input_str: String) -> Result<T,DecodeError>
@@ -66,48 +114,33 @@ where
     Ok(T::deserialize(Some(&value))?)
 }
 
+pub fn encode<T>(input: T) -> String
+where
+    T: Serialize,
+{
+    input.serialize().encode_json()
+}
+
 #[cfg(test)]
 pub mod test {
     use alloc::string::{String, ToString};
-    use alloc::vec;
     use alloc::vec::Vec;
-    use crate::mapper::Value;
-    use crate::serializer::{DecodeError, Deserialize};
+    use macros::{Deserialize, Serialize};
 
+    use crate::serializer;
+    use crate::mapper;
+    use crate::alloc::borrow::ToOwned;
+
+    #[derive(Debug, PartialEq, Deserialize, Serialize)]
     pub struct A {
         pub a: i32,
         pub b: String,
     }
 
+    #[derive(Debug, PartialEq, Deserialize, Serialize)]
     pub struct B {
         pub a: i32,
         pub b: Vec<String>,
-    }
-
-    impl Deserialize for B {
-        fn deserialize(value: Option<&Value>) -> Result<Self, DecodeError> {
-            let value = match value {
-                None => {return Ok(B {a: 0, b: vec![]})}
-                Some(v) => {v}
-            };
-
-            let a = value.get_value::<i32>("a")?;
-            let b = value.get_value::<Vec<String>>("b")?;
-            Ok(B { a, b })
-        }
-    }
-
-    impl Deserialize for A {
-        fn deserialize(value: Option<&Value>) -> Result<Self, DecodeError> {
-            let value = match value {
-                None => {return Ok(A {a: 0, b: "".to_string()})}
-                Some(v) => {v}
-            };
-
-            let a = value.get_value::<i32>("a")?;
-            let b = value.get_value::<String>("b")?;
-            Ok(A { a, b })
-        }
     }
 
     #[test]
@@ -137,6 +170,18 @@ pub mod test {
         assert_eq!(a.b.len(), 2);
         assert_eq!(a.b[0], "Hello");
         assert_eq!(a.b[1], "world");
+
+    }
+
+    #[test]
+    pub fn test_encode_json() {
+        let a = A {
+            a: 1,
+            b: "Hello".to_string(),
+        };
+
+        let json = super::encode(a);
+        assert_eq!(json, r#"{"a":1,"b":"Hello"}"#);
     }
 
 }
