@@ -5,6 +5,8 @@ description = "tiny-json-rs derive crate"
 authors = ["Edson Holanda"]
 edition = "2021"
 repository = "https://github.com/EdsonHTJ/tiny-json-rs"
+license = "MIT"
+license-file = "LICENSE"
 [lib]
 proc-macro = true
 
