@@ -42,6 +42,14 @@ pub struct B {
     pub a: i32,
     pub b: Vec<String>,
 }
+
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+pub struct C {
+    #[Rename = "CustomName"]
+    pub a: i32,
+    pub b: String,
+}
+
 ```
 
 #### Deserializing JSON
@@ -61,7 +69,6 @@ Convert a Rust struct to a JSON string:
 
 ```rust
 let obj = A {
-    #[Rename = "CustomName"]
     a: 1,
     b: "Hello".to_string(),
 };
