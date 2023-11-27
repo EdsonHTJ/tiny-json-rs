@@ -1,7 +1,10 @@
 [package]
 name = "tiny_json_derive"
 version = "0.1.0"
-
+description = "tiny-json-rs derive crate"
+authors = ["Edson Holanda"]
+edition = "2023"
+repository = "https://github.com/EdsonHTJ/tiny-json-rs"
 [lib]
 proc-macro = true
 
