@@ -61,12 +61,13 @@ Convert a Rust struct to a JSON string:
 
 ```rust
 let obj = A {
+    #[Rename = "CustomName"]
     a: 1,
     b: "Hello".to_string(),
 };
 
 let json = tiny_json_rs::encode(obj);
-assert_eq!(json, r#"{"a":1,"b":"Hello"}"#);
+assert_eq!(json, r#"{"CustomName":1,"b":"Hello"}"#);
 ```
 
 ## Testing
@@ -89,10 +90,6 @@ fn test_encode_json() {
     // ...
 }
 ```
-
-## Contributing
-
-Contributions to `tiny-json-rs` are welcome! Please refer to the [CONTRIBUTING.md](link-to-contributing-guide) for guidelines on how to contribute.
 
 ## License
 
