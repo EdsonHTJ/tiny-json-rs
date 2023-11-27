@@ -154,26 +154,32 @@ impl Lexer {
             Chars::LBrace => {
                 self.current_token.token_type = TokenType::LBrace;
                 self.current_token.literal = ch.to_string();
+                self.token_list.push(self.current_token.clone());
             }
             Chars::RBrace => {
                 self.current_token.token_type = TokenType::RBrace;
                 self.current_token.literal = ch.to_string();
+                self.token_list.push(self.current_token.clone());
             }
             Chars::LBracket => {
                 self.current_token.token_type = TokenType::LBracket;
                 self.current_token.literal = ch.to_string();
+                self.token_list.push(self.current_token.clone());
             }
             Chars::RBracket => {
                 self.current_token.token_type = TokenType::RBracket;
                 self.current_token.literal = ch.to_string();
+                self.token_list.push(self.current_token.clone());
             }
             Chars::Colon => {
                 self.current_token.token_type = TokenType::Colon;
                 self.current_token.literal = ch.to_string();
+                self.token_list.push(self.current_token.clone());
             }
             Chars::Comma => {
                 self.current_token.token_type = TokenType::Comma;
                 self.current_token.literal = ch.to_string();
+                self.token_list.push(self.current_token.clone());
             }
             Chars::Quote => {
                 self.current_token.token_type = TokenType::String(StringType::SimpleString);
@@ -185,6 +191,7 @@ impl Lexer {
             Chars::MinusSign => {
                 self.current_token.token_type = TokenType::Int;
                 self.current_token.literal = ch.to_string();
+                self.token_list.push(self.current_token.clone());
             }
             Chars::Space => {}
             Chars::Char(c) => {
@@ -315,7 +322,6 @@ impl Lexer {
                 self.process_float_token()?;
             }
             _ => {
-                self.token_list.push(self.current_token.clone());
                 self.current_token = Token::default();
             }
         }
@@ -436,6 +442,39 @@ mod test {
         assert_eq!(tokens[35].literal, "]");
         assert_eq!(tokens[36].token_type, TokenType::RBrace);
         assert_eq!(tokens[36].literal, "}");
+    }
+
+    #[test]
+    fn test_simple() {
+        const JSON: &str = r#"
+        {
+            "a": 1,
+            "b": "Hello",
+        }"#;
+
+        let mut lexer = Lexer::new(JSON.to_string());
+        let tokens = lexer.tokenize().unwrap();
+        assert_eq!(tokens.len(), 10);
+        assert_eq!(tokens[0].token_type, TokenType::LBrace);
+        assert_eq!(tokens[0].literal, "{");
+        assert_eq!(tokens[1].token_type, TokenType::String(StringType::SimpleString));
+        assert_eq!(tokens[1].literal, "\"a\"");
+        assert_eq!(tokens[2].token_type, TokenType::Colon);
+        assert_eq!(tokens[2].literal, ":");
+        assert_eq!(tokens[3].token_type, TokenType::Int);
+        assert_eq!(tokens[3].literal, "1");
+        assert_eq!(tokens[4].token_type, TokenType::Comma);
+        assert_eq!(tokens[4].literal, ",");
+        assert_eq!(tokens[5].token_type, TokenType::String(StringType::SimpleString));
+        assert_eq!(tokens[5].literal, "\"b\"");
+        assert_eq!(tokens[6].token_type, TokenType::Colon);
+        assert_eq!(tokens[6].literal, ":");
+        assert_eq!(tokens[7].token_type, TokenType::String(StringType::SimpleString));
+        assert_eq!(tokens[7].literal, "\"Hello\"");
+        assert_eq!(tokens[8].token_type, TokenType::Comma);
+        assert_eq!(tokens[8].literal, ",");
+        assert_eq!(tokens[9].token_type, TokenType::RBrace);
+        assert_eq!(tokens[9].literal, "}");
     }
 }
 

@@ -2,7 +2,6 @@ use alloc::string::{String, ToString};
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 use core::any::Any;
-use core::f32::consts::E;
 use core::fmt::Display;
 use crate::lexer::{StringType, Token, TokenType};
 
