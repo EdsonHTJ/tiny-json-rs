@@ -1,22 +1,22 @@
+use crate::mapper::Value;
+use crate::serializer::{DecodeError, Deserialize};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::str::FromStr;
-use crate::mapper::Value;
-use crate::serializer::{DecodeError, Deserialize};
 
 pub fn parse_token<T>(value: Option<&Value>) -> Result<T, DecodeError>
 where
     T: FromStr,
 {
     let value = match value {
-        None => {return T::from_str("").map_err(|_| DecodeError::ParseError)}
-        Some(v) => {v}
+        None => return T::from_str("").map_err(|_| DecodeError::ParseError),
+        Some(v) => v,
     };
 
     let token = match value {
-        Value::Token(t) => {t}
-        _ => {return Err(DecodeError::UnexpectedType)}
+        Value::Token(t) => t,
+        _ => return Err(DecodeError::UnexpectedType),
     };
 
     return token.to::<T>();
@@ -139,12 +139,12 @@ where
 
 impl<T> Deserialize for Vec<T>
 where
-    T: Deserialize
+    T: Deserialize,
 {
     fn deserialize(value: Option<&Value>) -> Result<Self, DecodeError> {
         let value = match value {
-            None => {return Ok(Vec::new())}
-            Some(v) => {v}
+            None => return Ok(Vec::new()),
+            Some(v) => v,
         };
         match value {
             Value::Array(array) => {
@@ -154,7 +154,7 @@ where
                     vec.push(res);
                 }
                 Ok(vec)
-            },
+            }
             _ => Err(DecodeError::UnexpectedType),
         }
     }

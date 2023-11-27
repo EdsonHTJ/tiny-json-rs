@@ -1,11 +1,11 @@
 mod deserializers;
 mod serializers;
 
+use crate::lexer::{Lexer, LexerError, Token};
+use crate::mapper::{Mapper, MapperError, Value};
 use alloc::format;
 use alloc::string::String;
 use core::str::FromStr;
-use crate::lexer::{Lexer, LexerError, Token};
-use crate::mapper::{Mapper, MapperError, Value};
 
 pub trait Deserialize: Sized {
     fn deserialize(value: Option<&Value>) -> Result<Self, DecodeError>;
@@ -37,21 +37,21 @@ impl From<LexerError> for DecodeError {
 
 impl Token {
     pub fn to<T>(&self) -> Result<T, DecodeError>
-        where
-            T: FromStr,
+    where
+        T: FromStr,
     {
         T::from_str(&self.literal).map_err(|_| DecodeError::ParseError)
     }
 }
 
 impl Value {
-
     pub fn get_value<T>(&self, key: &str) -> Result<T, DecodeError>
-    where T: Deserialize
+    where
+        T: Deserialize,
     {
-        let option_val =match self {
+        let option_val = match self {
             Value::Object(object) => object.get(key),
-            _ => None
+            _ => None,
         };
 
         let res = T::deserialize(option_val)?;
@@ -74,16 +74,14 @@ impl Value {
                 }
                 output += "}";
             }
-            Value::Token(t) => {
-                match t.token_type {
-                    crate::lexer::TokenType::String(_) => {
-                        output += &format!("\"{}\"", t.literal);
-                    }
-                    _ => {
-                        output += &format!("{}", t.literal);
-                    }
+            Value::Token(t) => match t.token_type {
+                crate::lexer::TokenType::String(_) => {
+                    output += &format!("\"{}\"", t.literal);
                 }
-            }
+                _ => {
+                    output += &format!("{}", t.literal);
+                }
+            },
             Value::Array(a) => {
                 output += "[";
                 let mut first = true;
@@ -102,7 +100,7 @@ impl Value {
     }
 }
 
-pub fn decode<T>(input_str: String) -> Result<T,DecodeError>
+pub fn decode<T>(input_str: String) -> Result<T, DecodeError>
 where
     T: Deserialize,
 {
@@ -127,9 +125,9 @@ pub mod test {
     use alloc::vec::Vec;
     use macros::{Deserialize, Serialize};
 
-    use crate::serializer;
-    use crate::mapper;
     use crate::alloc::borrow::ToOwned;
+    use crate::mapper;
+    use crate::serializer;
 
     #[derive(Debug, PartialEq, Deserialize, Serialize)]
     pub struct A {
@@ -145,7 +143,6 @@ pub mod test {
 
     #[test]
     pub fn test_deserialize() {
-
         const JSON: &str = r#"
         {
             "a": 1,
@@ -170,7 +167,6 @@ pub mod test {
         assert_eq!(a.b.len(), 2);
         assert_eq!(a.b[0], "Hello");
         assert_eq!(a.b[1], "world");
-
     }
 
     #[test]
@@ -183,5 +179,4 @@ pub mod test {
         let json = super::encode(a);
         assert_eq!(json, r#"{"a":1,"b":"Hello"}"#);
     }
-
 }

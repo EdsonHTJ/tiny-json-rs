@@ -5,7 +5,7 @@ use alloc::vec::Vec;
 const SIMPLE_ALPHA: &str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
 const DIGITS: &str = "0123456789";
 //  Json tokens
-pub enum Chars{
+pub enum Chars {
     LBrace,
     RBrace,
     LBracket,
@@ -105,7 +105,7 @@ impl Token {
         return Token {
             token_type: TokenType::None,
             literal: "".to_string(),
-        }
+        };
     }
 }
 
@@ -121,7 +121,7 @@ pub struct Lexer {
     pub position: usize,
     pub token_list: Vec<Token>,
     pub current_token: Token,
-    pub line : usize,
+    pub line: usize,
 }
 
 impl Lexer {
@@ -135,7 +135,7 @@ impl Lexer {
                 token_type: TokenType::None,
                 literal: "".to_string(),
             },
-        }
+        };
     }
 
     fn read_char(&mut self) -> Result<Chars, LexerError> {
@@ -148,7 +148,7 @@ impl Lexer {
         return Ok(Chars::from(ch));
     }
 
-    fn process_start_token(&mut self) -> Result<(), LexerError>{
+    fn process_start_token(&mut self) -> Result<(), LexerError> {
         let ch = self.read_char()?;
         match ch {
             Chars::LBrace => {
@@ -212,7 +212,7 @@ impl Lexer {
         Ok(())
     }
 
-    fn process_int_token(&mut self) -> Result<(), LexerError>{
+    fn process_int_token(&mut self) -> Result<(), LexerError> {
         let ch = self.read_char()?;
         match ch {
             Chars::Char(_) => {
@@ -237,7 +237,7 @@ impl Lexer {
         Ok(())
     }
 
-    fn process_string_token(&mut self) -> Result<(), LexerError>{
+    fn process_string_token(&mut self) -> Result<(), LexerError> {
         let ch = self.read_char()?;
         match ch {
             Chars::Char(c) => {
@@ -261,7 +261,7 @@ impl Lexer {
         Ok(())
     }
 
-    fn process_reseved_string(&mut self) -> Result<(), LexerError>{
+    fn process_reseved_string(&mut self) -> Result<(), LexerError> {
         let ch = self.read_char()?;
         match ch {
             Chars::Char(c) => {
@@ -281,7 +281,7 @@ impl Lexer {
         Ok(())
     }
 
-    fn process_float_token(&mut self) -> Result<(), LexerError>{
+    fn process_float_token(&mut self) -> Result<(), LexerError> {
         let ch = self.read_char()?;
         match ch {
             Chars::Char(_) => {
@@ -302,8 +302,7 @@ impl Lexer {
         Ok(())
     }
 
-
-    fn process_next_token(&mut self) ->Result<(), LexerError> {
+    fn process_next_token(&mut self) -> Result<(), LexerError> {
         match self.current_token.token_type {
             TokenType::None => {
                 self.process_start_token()?;
@@ -328,7 +327,7 @@ impl Lexer {
         Ok(())
     }
 
-    pub fn tokenize(&mut self) -> Result<Vec<Token>,LexerError> {
+    pub fn tokenize(&mut self) -> Result<Vec<Token>, LexerError> {
         self.token_list = Vec::new();
         self.current_token = Token::default();
         while self.position < self.input.len() {
@@ -338,5 +337,3 @@ impl Lexer {
         Ok(self.token_list.clone())
     }
 }
-
-

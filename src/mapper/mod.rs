@@ -1,8 +1,8 @@
-use alloc::string::{String};
+use crate::lexer::{StringType, Token, TokenType};
 use alloc::collections::BTreeMap;
+use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt::Display;
-use crate::lexer::{StringType, Token, TokenType};
 
 pub type Object = BTreeMap<String, Value>;
 
@@ -25,7 +25,7 @@ impl Display for Value {
 
 #[derive(Debug, PartialEq)]
 pub enum MapperError {
-    UnexpectedToken(Token)
+    UnexpectedToken(Token),
 }
 
 pub struct Mapper {
@@ -51,7 +51,7 @@ impl Mapper {
         self.token_list[self.position].clone()
     }
 
-    fn expect(&mut self, token_type: TokenType) -> Result<Token,MapperError> {
+    fn expect(&mut self, token_type: TokenType) -> Result<Token, MapperError> {
         let token = self.read_token();
         if token.token_type != token_type {
             return Err(MapperError::UnexpectedToken(token));
@@ -70,7 +70,7 @@ impl Mapper {
             if token.token_type == TokenType::LBrace {
                 let object = self.parse_object()?;
                 array.push(Value::Object(object));
-            }else {
+            } else {
                 let token = self.read_token();
                 array.push(Value::Token(token));
             }
@@ -79,7 +79,7 @@ impl Mapper {
             match token.token_type {
                 TokenType::Comma => continue,
                 TokenType::RBracket => break,
-                _ => return Err(MapperError::UnexpectedToken(token))
+                _ => return Err(MapperError::UnexpectedToken(token)),
             }
         }
         Ok(array)
@@ -93,26 +93,24 @@ impl Mapper {
             TokenType::String(_) => {
                 let value = Value::Token(value_token);
                 Ok((key_token.literal, value))
-            },
+            }
             TokenType::Int | TokenType::Float | TokenType::ReservedString => {
                 let value = Value::Token(value_token);
                 Ok((key_token.literal, value))
-            },
+            }
             TokenType::LBrace => {
                 let value = Value::Object(self.parse_object()?);
                 Ok((key_token.literal, value))
-            },
+            }
             TokenType::LBracket => {
                 let value = Value::Array(self.parse_array()?);
                 Ok((key_token.literal, value))
-            },
-            _ => {
-                Err(MapperError::UnexpectedToken(value_token))
             }
-        }
+            _ => Err(MapperError::UnexpectedToken(value_token)),
+        };
     }
 
-    pub fn parse_object(&mut self) -> Result<Object,MapperError> {
+    pub fn parse_object(&mut self) -> Result<Object, MapperError> {
         let mut object = BTreeMap::new();
         self.expect(TokenType::LBrace)?;
         loop {
@@ -127,7 +125,7 @@ impl Mapper {
             match token.token_type {
                 TokenType::Comma => continue,
                 TokenType::RBrace => break,
-                _ => return Err(MapperError::UnexpectedToken(token))
+                _ => return Err(MapperError::UnexpectedToken(token)),
             }
         }
         Ok(object)
@@ -136,7 +134,7 @@ impl Mapper {
 
 #[cfg(test)]
 pub mod test {
-    use alloc::string::{ToString};
+    use alloc::string::ToString;
 
     #[test]
     pub fn test_mapper() {
@@ -156,7 +154,8 @@ pub mod test {
                 }
             ]
         }
-        "#.to_string();
+        "#
+        .to_string();
 
         let token_list = crate::lexer::Lexer::new(input).tokenize().unwrap();
         let mut mapper = crate::mapper::Mapper::new(token_list);
@@ -167,17 +166,17 @@ pub mod test {
 
         let cars = match object["cars"] {
             crate::mapper::Value::Array(ref cars) => cars,
-            _ => panic!("Expected array")
+            _ => panic!("Expected array"),
         };
 
         let car1 = match cars[0] {
             crate::mapper::Value::Object(ref car) => car,
-            _ => panic!("Expected object")
+            _ => panic!("Expected object"),
         };
 
         let car2 = match cars[1] {
             crate::mapper::Value::Object(ref car) => car,
-            _ => panic!("Expected object")
+            _ => panic!("Expected object"),
         };
 
         assert_eq!(car1["name"].to_string(), "Ford");

@@ -1,8 +1,8 @@
-use alloc::string::{String, ToString};
-use alloc::vec::Vec;
 use crate::lexer::{StringType, Token, TokenType};
 use crate::mapper::Value;
 use crate::serializer::Serialize;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
 
 impl Serialize for u8 {
     fn serialize(&self) -> Value {

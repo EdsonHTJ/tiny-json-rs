@@ -5,7 +5,7 @@ extern crate alloc;
 use alloc::string::String;
 
 pub mod lexer;
-pub mod     mapper;
+pub mod mapper;
 pub mod serializer;
 
 pub fn encode<T>(value: T) -> String
