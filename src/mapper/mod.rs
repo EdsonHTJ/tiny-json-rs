@@ -1,13 +1,12 @@
 use alloc::string::{String, ToString};
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
-use core::any::Any;
 use core::fmt::Display;
 use crate::lexer::{StringType, Token, TokenType};
 
 pub type Object = BTreeMap<String, Value>;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Value {
     Token(Token),
     Object(Object),
@@ -142,8 +141,7 @@ impl Mapper {
 
 #[cfg(test)]
 pub mod test {
-    use alloc::string::{String, ToString};
-    use alloc::vec::Vec;
+    use alloc::string::{ToString};
 
     #[test]
     pub fn test_mapper() {
@@ -168,7 +166,6 @@ pub mod test {
         let token_list = crate::lexer::Lexer::new(input).tokenize().unwrap();
         let mut mapper = crate::mapper::Mapper::new(token_list);
         let object = mapper.parse_object().unwrap();
-        let keys = object.keys().collect::<Vec<&String>>();
         assert_eq!(object["name"].to_string(), "John");
         assert_eq!(object["age"].to_string(), "30");
         assert_eq!(object["isActive"].to_string(), "True");
