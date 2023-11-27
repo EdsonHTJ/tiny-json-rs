@@ -131,6 +131,7 @@ pub mod test {
 
     #[derive(Debug, PartialEq, Deserialize, Serialize)]
     pub struct A {
+        #[Rename = "aJson"]
         pub a: i32,
         pub b: String,
     }
@@ -141,11 +142,17 @@ pub mod test {
         pub b: Vec<String>,
     }
 
+    #[derive(Debug, PartialEq, Deserialize, Serialize)]
+    pub struct C {
+        pub a: i32,
+        pub b: Vec<A>,
+    }
+
     #[test]
     pub fn test_deserialize() {
         const JSON: &str = r#"
         {
-            "a": 1,
+            "aJson": 1,
             "b": "Hello"
         }"#;
 
@@ -177,6 +184,32 @@ pub mod test {
         };
 
         let json = super::encode(a);
-        assert_eq!(json, r#"{"a":1,"b":"Hello"}"#);
+        assert_eq!(json, r#"{"aJson":1,"b":"Hello"}"#);
+    }
+
+    #[test]
+    pub fn test_nested() {
+        const JSON: &str = r#"
+        {
+            "a": 1,
+            "b": [
+                {
+                    "aJson": 1,
+                    "b": "Hello"
+                },
+                {
+                    "aJson": 2,
+                    "b": "World"
+                }
+            ]
+        }"#;
+
+        let a: C = super::decode(JSON.to_string()).unwrap();
+        assert_eq!(a.a, 1);
+        assert_eq!(a.b.len(), 2);
+        assert_eq!(a.b[0].a, 1);
+        assert_eq!(a.b[0].b, "Hello");
+        assert_eq!(a.b[1].a, 2);
+        assert_eq!(a.b[1].b, "World");
     }
 }
