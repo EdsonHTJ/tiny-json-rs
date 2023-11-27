@@ -1,4 +1,4 @@
-use alloc::string::{String, ToString};
+use alloc::string::{String};
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
 use core::fmt::Display;
@@ -91,9 +91,6 @@ impl Mapper {
         let value_token = self.read_token();
         return match value_token.token_type {
             TokenType::String(_) => {
-                //Trim " from value
-                let mut value_token = value_token;
-                value_token.literal = value_token.literal[1..value_token.literal.len()-1].to_string();
                 let value = Value::Token(value_token);
                 Ok((key_token.literal, value))
             },
@@ -125,8 +122,6 @@ impl Mapper {
             }
 
             let (key, value) = self.parse_value()?;
-            //Trim " from key
-            let key = key[1..key.len()-1].to_string();
             object.insert(key, value);
             let token = self.read_token();
             match token.token_type {

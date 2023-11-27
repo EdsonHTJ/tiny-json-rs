@@ -133,9 +133,10 @@ pub mod test {
         }"#;
 
         let a: B = super::decode(JSON.to_string()).unwrap();
-        assert_eq!(a.len(), 1);
-        assert_eq!(a[0].a, 1);
-        assert_eq!(a[0].b, "Hello");
+        assert_eq!(a.a, 1);
+        assert_eq!(a.b.len(), 2);
+        assert_eq!(a.b[0], "Hello");
+        assert_eq!(a.b[1], "world");
     }
 
 }

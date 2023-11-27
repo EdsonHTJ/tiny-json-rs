@@ -183,7 +183,7 @@ impl Lexer {
             }
             Chars::Quote => {
                 self.current_token.token_type = TokenType::String(StringType::SimpleString);
-                self.current_token.literal = ch.to_string();
+                self.current_token.literal = "".to_string();
             }
             Chars::NewLine => {
                 self.line += 1;
@@ -249,7 +249,6 @@ impl Lexer {
                 }
             }
             Chars::Quote => {
-                self.current_token.literal.push(ch.to_char());
                 self.token_list.push(self.current_token.clone());
                 self.current_token = Token::default();
             }
