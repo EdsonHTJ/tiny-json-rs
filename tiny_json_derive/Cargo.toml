@@ -6,7 +6,7 @@ authors = ["Edson Holanda"]
 edition = "2021"
 repository = "https://github.com/EdsonHTJ/tiny-json-rs"
 license = "MIT"
-license-file = "../LICENSE.md"
+
 [lib]
 proc-macro = true
 
