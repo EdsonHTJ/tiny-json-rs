@@ -1,6 +1,6 @@
 [package]
 name = "tiny-json-rs"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 
 description = "tiny-json-rs is a simple and lightweight JSON parser for Rust."
