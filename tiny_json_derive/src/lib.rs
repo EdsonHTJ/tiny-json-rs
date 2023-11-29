@@ -60,7 +60,7 @@ pub fn deserialize_derive(input: TokenStream) -> TokenStream {
         quote! {
         let #field_name = match value.get_value::<#ty>(&#field_key) {
             Ok(val) => val,
-            Err(_) => return Err(serializer::DecodeError::ParseError),
+            Err(e) => return Err(e),
         };
     }
     }).collect::<Vec<_>>();
@@ -74,7 +74,7 @@ pub fn deserialize_derive(input: TokenStream) -> TokenStream {
         impl serializer::Deserialize for #name {
             fn deserialize(value: Option<&serializer::Value>) -> Result<Self, serializer::DecodeError> {
                 let value = match value {
-                    None => {return Err(serializer::DecodeError::ParseError)}
+                    None => {return Err(serializer::DecodeError::ParseError("Could not parse None".to_string()))}
                     Some(v) => {v}
                 };
 

@@ -142,7 +142,21 @@ pub mod test {
     #[test]
     pub fn test_mapper() {
         let input = r#"
-        {"RawData":{"Nonce":2,"Sender":"1BvsDtWX8HxAbPfdCwBhkiVvsxDf75NzMOlDrsW7p4c=","Contract":[{"Parameter":{"type_url":"type.googleapis.com/proto.TransferContract","value":"CiDfSWO7Nahu8tqpVPkMTvE2JjFI8WRp/MbE/2lp+8Po7xgB"}}],"KAppFee":500000,"BandwidthFee":1000000,"Version":1,"ChainID":"MTA4"}}
+        {
+            "name": "John",
+            "age": 30,
+            "isActive": True,
+            "cars": [
+                {
+                    "name": "Ford",
+                    "plate": "20-13f"
+                },
+                {
+                    "name": "Fiat",
+                    "plate": "20-13f"
+                }
+            ]
+        }
         "#
         .to_string();
 

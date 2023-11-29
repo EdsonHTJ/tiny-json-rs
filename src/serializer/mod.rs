@@ -20,7 +20,7 @@ pub enum DecodeError {
     MapperError(MapperError),
     LexerError(LexerError),
     UnexpectedType,
-    ParseError,
+    ParseError(String),
 }
 
 impl From<MapperError> for DecodeError {
@@ -40,7 +40,13 @@ impl Token {
     where
         T: FromStr,
     {
-        T::from_str(&self.literal).map_err(|_| DecodeError::ParseError)
+        T::from_str(&self.literal).map_err(|_| {
+            DecodeError::ParseError(format!(
+                "Could not parse {} to {}",
+                self.literal,
+                core::any::type_name::<T>()
+            ))
+        })
     }
 }
 
@@ -121,9 +127,9 @@ where
 
 #[cfg(test)]
 pub mod test {
+    use crate::{Deserialize, Serialize};
     use alloc::string::{String, ToString};
     use alloc::vec::Vec;
-    use crate::{Deserialize, Serialize};
 
     use crate::alloc::borrow::ToOwned;
     use crate::mapper;

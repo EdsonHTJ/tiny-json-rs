@@ -1,6 +1,7 @@
 use crate::mapper::Value;
 use crate::serializer::{DecodeError, Deserialize};
 use alloc::boxed::Box;
+use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::str::FromStr;
@@ -10,7 +11,13 @@ where
     T: FromStr,
 {
     let value = match value {
-        None => return T::from_str("").map_err(|_| DecodeError::ParseError),
+        None => {
+            return Err(DecodeError::ParseError(format!(
+                "Could not parse {} to {}",
+                "None",
+                core::any::type_name::<T>()
+            )))
+        }
         Some(v) => v,
     };
 
