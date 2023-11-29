@@ -19,7 +19,7 @@ Add `tiny-json-rs` to your Cargo.toml:
 
 ```toml
 [dependencies]
-tiny-json-rs = "0.1.0"
+tiny-json-rs = "0.2.5"
 ```
 
 ### Basic Examples
@@ -43,13 +43,17 @@ pub struct B {
     pub b: Vec<String>,
 }
 
+```
+
+Can also derive custom names
+
+```rust
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct C {
     #[Rename = "CustomName"]
     pub a: i32,
     pub b: String,
 }
-
 ```
 
 #### Deserializing JSON
@@ -68,7 +72,7 @@ assert_eq!(parsed.b, "Hello");
 Convert a Rust struct to a JSON string:
 
 ```rust
-let obj = A {
+let obj = C {
     a: 1,
     b: "Hello".to_string(),
 };
