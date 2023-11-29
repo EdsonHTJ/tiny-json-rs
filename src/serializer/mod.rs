@@ -1,8 +1,8 @@
-mod deserializers;
-mod serializers;
+pub mod deserializers;
+pub mod serializers;
 
-use crate::lexer::{Lexer, LexerError, Token};
-use crate::mapper::{Mapper, MapperError, Value};
+pub use crate::lexer::{Lexer, LexerError, Token};
+pub use crate::mapper::{Mapper, MapperError, Value};
 use alloc::format;
 use alloc::string::String;
 use core::str::FromStr;
@@ -123,7 +123,7 @@ where
 pub mod test {
     use alloc::string::{String, ToString};
     use alloc::vec::Vec;
-    use tiny_json_derive::{Deserialize, Serialize};
+    use crate::{Deserialize, Serialize};
 
     use crate::alloc::borrow::ToOwned;
     use crate::mapper;
