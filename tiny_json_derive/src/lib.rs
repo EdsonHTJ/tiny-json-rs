@@ -8,6 +8,7 @@ use syn::{parse_macro_input, DeriveInput, Fields, Data};
 use syn::Attribute;
 use syn::Meta;
 use syn::Lit;
+
 // Define a struct to represent the Rename attribute
 struct RenameAttr(String);
 
