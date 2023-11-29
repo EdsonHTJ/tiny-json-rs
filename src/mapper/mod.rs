@@ -61,6 +61,7 @@ impl Mapper {
 
     fn parse_array(&mut self) -> Result<Vec<Value>, MapperError> {
         let mut array = Vec::new();
+        self.expect(TokenType::LBracket)?; // [
         loop {
             let token = self.peek_token();
             if token.token_type == TokenType::RBracket {
@@ -99,10 +100,12 @@ impl Mapper {
                 Ok((key_token.literal, value))
             }
             TokenType::LBrace => {
+                self.position -= 1;
                 let value = Value::Object(self.parse_object()?);
                 Ok((key_token.literal, value))
             }
             TokenType::LBracket => {
+                self.position -= 1;
                 let value = Value::Array(self.parse_array()?);
                 Ok((key_token.literal, value))
             }
@@ -139,21 +142,7 @@ pub mod test {
     #[test]
     pub fn test_mapper() {
         let input = r#"
-        {
-            "name": "John",
-            "age": 30,
-            "isActive": True,
-            "cars": [
-                {
-                    "name": "Ford",
-                    "plate": "20-13f"
-                },
-                {
-                    "name": "Fiat",
-                    "plate": "20-13f"
-                }
-            ]
-        }
+        {"RawData":{"Nonce":2,"Sender":"1BvsDtWX8HxAbPfdCwBhkiVvsxDf75NzMOlDrsW7p4c=","Contract":[{"Parameter":{"type_url":"type.googleapis.com/proto.TransferContract","value":"CiDfSWO7Nahu8tqpVPkMTvE2JjFI8WRp/MbE/2lp+8Po7xgB"}}],"KAppFee":500000,"BandwidthFee":1000000,"Version":1,"ChainID":"MTA4"}}
         "#
         .to_string();
 

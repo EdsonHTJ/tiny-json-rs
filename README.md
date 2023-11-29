@@ -100,4 +100,7 @@ fn test_encode_json() {
 
 ## License
 
-`tiny-json-rs` is licensed under [MIT](link-to-license).
+`tiny-json-rs` is licensed under MIT.
+
+## Issues?
+This is an experimental project, not production ready yet. If you find any issues, please report them [here](https://github.com/EdsonHTJ/tiny-json-rs/issues)
